@@ -1,0 +1,30 @@
+---
+
+- name: "Debian: Add postgresql.org repository GPG key"
+  apt_key:
+    url: "{{ postgresql__gpg_url }}"
+
+- name: "Debian: Configure postgresql.org apt repository"
+  apt_repository:
+    repo: "{{ postgresql__apt_repo }}"
+    state: present
+    update_cache: yes
+
+- name: "Debian: Install postgresql package"
+  apt:
+    name: "postgresql-{{ postgresql__version }}"
+    state: present
+  notify:
+    - restart postgresql
+
+- name: "Debian: Install python psycopg2"
+  apt:
+    name: "{{ postgresql__psycopg2 }}"
+    state: present
+
+- name: "Debian: Install postgresql extensions"
+  apt:
+    name: "postgresql-{{ postgresql__version }}-{{ item }}"
+    state: present
+  notify: restart postgresql
+  with_items: "{{ postgresql__extensions }}"

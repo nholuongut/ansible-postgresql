@@ -1,0 +1,16 @@
+---
+
+- hosts: test
+  tasks:
+  - apt:
+      name:
+        - gnupg
+        - locales
+      state: present
+      update_cache: yes
+
+- import_playbook: test_stretch.yml
+  when: ansible_distribution_release == "stretch"
+
+- import_playbook: test_jessie.yml
+  when: ansible_distribution_release == "jessie"
